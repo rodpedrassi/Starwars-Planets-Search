@@ -30,7 +30,7 @@ function PlanetsProvider({ children }) {
   };
 
   const contextType = {
-    ...planets,
+    planets,
     fetchPlanets,
   };
   return (
