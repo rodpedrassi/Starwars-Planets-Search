@@ -20,18 +20,24 @@ function PlanetsProvider({ children }) {
 //     url: '',
 //   }]);
   const [planets, setPlanets] = useState([]);
+  const [filter, setFilter] = useState({
+    filterByName: {
+      name: '',
+    },
+  });
 
   const fetchPlanets = async () => {
     const response = await getStarWarsPlanets();
     response.forEach((planet) => {
       setPlanets((prev) => [...prev, planet]);
-      console.log(planet);
     });
   };
 
   const contextType = {
     planets,
     fetchPlanets,
+    filter,
+    setFilter,
   };
   return (
     <PlanetsContext.Provider value={ contextType }>

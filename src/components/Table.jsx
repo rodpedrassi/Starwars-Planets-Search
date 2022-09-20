@@ -2,7 +2,8 @@ import React, { useContext, useEffect } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 
 function Table() {
-  const { planets, fetchPlanets } = useContext(PlanetsContext);
+  const { planets, fetchPlanets, filter } = useContext(PlanetsContext);
+  const { filterByName: { name } } = filter;
 
   useEffect(() => {
     fetchPlanets();
@@ -29,7 +30,7 @@ function Table() {
           </tr>
         </thead>
         <tbody>
-          {planets.map((planet) => (
+          {name === '' && planets.map((planet) => (
             <tr key={ planet.name }>
               <td>{planet.name}</td>
               <td>{planet.rotation_period}</td>
@@ -46,6 +47,24 @@ function Table() {
               <td>{planet.url}</td>
             </tr>
           ))}
+          {/* { name !== '' && planets.filter((e) => e.name.toLowerCase()
+            .includes(name.toLowerCase()).map((planet) => (
+              <tr key={ planet.name }>
+                <td>{planet.name}</td>
+                <td>{planet.rotation_period}</td>
+                <td>{planet.orbital_period}</td>
+                <td>{planet.diameter}</td>
+                <td>{planet.climate}</td>
+                <td>{planet.gravity}</td>
+                <td>{planet.terrain}</td>
+                <td>{planet.surface_water}</td>
+                <td>{planet.population}</td>
+                <td>{planet.films}</td>
+                <td>{planet.created}</td>
+                <td>{planet.edited}</td>
+                <td>{planet.url}</td>
+              </tr>
+            )))} */}
         </tbody>
       </table>
     </div>

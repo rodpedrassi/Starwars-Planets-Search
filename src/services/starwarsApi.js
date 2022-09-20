@@ -11,7 +11,6 @@ const getStarWarsPlanets = async () => {
   const json = await response.json();
   const { results } = json;
   const filteredResult = removeKeyResidents(results);
-  //   console.log(filteredResult);
   return filteredResult;
 };
 
