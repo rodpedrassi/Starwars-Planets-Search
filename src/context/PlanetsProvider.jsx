@@ -25,6 +25,15 @@ function PlanetsProvider({ children }) {
       name: '',
     },
   });
+  const [filterByNum, setFilterByNum] = useState({
+    filterByNumericValues: [
+      {
+        column: 'population',
+        comparison: 'maior que',
+        value: '0',
+      },
+    ],
+  });
 
   const fetchPlanets = async () => {
     const response = await getStarWarsPlanets();
@@ -38,6 +47,8 @@ function PlanetsProvider({ children }) {
     fetchPlanets,
     filter,
     setFilter,
+    filterByNum,
+    setFilterByNum,
   };
   return (
     <PlanetsContext.Provider value={ contextType }>

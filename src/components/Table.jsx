@@ -2,12 +2,19 @@ import React, { useContext, useEffect, useState } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 
 function Table() {
-  const { planets, fetchPlanets, filter } = useContext(PlanetsContext);
+  const { planets, fetchPlanets, filter, filterByNum } = useContext(PlanetsContext);
   const { filterByName: { name } } = filter;
+  const { filterByNumericValues } = filterByNum;
   const [filteredPlanets, setFilteredPlanets] = useState([]);
 
   useEffect(() => {
-    fetchPlanets();
+    async function fetchData() {
+      await fetchPlanets();
+      console.log(planets);
+      setFilteredPlanets(planets);
+      console.log(filteredPlanets);
+    }
+    fetchData();
   }, []);
 
   const renderPlanets = (planetsFiltered) => (
@@ -35,8 +42,21 @@ function Table() {
     setFilteredPlanets(planetsFiltered);
   }, [name]);
 
+  useEffect(() => {
+    let index = 1;
+    if (filterByNumericValues.length > 1) {
+      const { column, comparison, value } = filterByNumericValues[index];
+      // console.log(column, comparison, value);
+      const newFilter = filteredPlanets.filter((e) => e[column] > value);
+      // console.log(newFilter);
+      setFilteredPlanets(newFilter);
+      index += 1;
+    }
+  }, [filterByNumericValues]);
+
   return (
     <div>
+      {/* {console.log(filterByNumericValues)} */}
       <table>
         <thead>
           <tr>
