@@ -1,13 +1,39 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 
 function Table() {
   const { planets, fetchPlanets, filter } = useContext(PlanetsContext);
   const { filterByName: { name } } = filter;
+  const [filteredPlanets, setFilteredPlanets] = useState([]);
 
   useEffect(() => {
     fetchPlanets();
   }, []);
+
+  const renderPlanets = (planetsFiltered) => (
+    planetsFiltered.map((planet) => (
+      <tr key={ planet.name }>
+        <td>{planet.name}</td>
+        <td>{planet.rotation_period}</td>
+        <td>{planet.orbital_period}</td>
+        <td>{planet.diameter}</td>
+        <td>{planet.climate}</td>
+        <td>{planet.gravity}</td>
+        <td>{planet.terrain}</td>
+        <td>{planet.surface_water}</td>
+        <td>{planet.population}</td>
+        <td>{planet.films}</td>
+        <td>{planet.created}</td>
+        <td>{planet.edited}</td>
+        <td>{planet.url}</td>
+      </tr>
+    )));
+
+  useEffect(() => {
+    const planetsFiltered = planets.filter((e) => e.name.toLowerCase()
+      .includes(name.toLowerCase()));
+    setFilteredPlanets(planetsFiltered);
+  }, [name]);
 
   return (
     <div>
@@ -30,41 +56,7 @@ function Table() {
           </tr>
         </thead>
         <tbody>
-          {name === '' && planets.map((planet) => (
-            <tr key={ planet.name }>
-              <td>{planet.name}</td>
-              <td>{planet.rotation_period}</td>
-              <td>{planet.orbital_period}</td>
-              <td>{planet.diameter}</td>
-              <td>{planet.climate}</td>
-              <td>{planet.gravity}</td>
-              <td>{planet.terrain}</td>
-              <td>{planet.surface_water}</td>
-              <td>{planet.population}</td>
-              <td>{planet.films}</td>
-              <td>{planet.created}</td>
-              <td>{planet.edited}</td>
-              <td>{planet.url}</td>
-            </tr>
-          ))}
-          {/* { name !== '' && planets.filter((e) => e.name.toLowerCase()
-            .includes(name.toLowerCase()).map((planet) => (
-              <tr key={ planet.name }>
-                <td>{planet.name}</td>
-                <td>{planet.rotation_period}</td>
-                <td>{planet.orbital_period}</td>
-                <td>{planet.diameter}</td>
-                <td>{planet.climate}</td>
-                <td>{planet.gravity}</td>
-                <td>{planet.terrain}</td>
-                <td>{planet.surface_water}</td>
-                <td>{planet.population}</td>
-                <td>{planet.films}</td>
-                <td>{planet.created}</td>
-                <td>{planet.edited}</td>
-                <td>{planet.url}</td>
-              </tr>
-            )))} */}
+          { name.length === 0 ? renderPlanets(planets) : renderPlanets(filteredPlanets)}
         </tbody>
       </table>
     </div>
