@@ -2,12 +2,12 @@ import React, { useContext, useState } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 
 function SearchByNumberInput() {
-  const { setFilterByNum } = useContext(PlanetsContext);
+  const { setFilterByNum, setIsSearching } = useContext(PlanetsContext);
 
   const [filters, setFilters] = useState({
     column: 'population',
     comparison: 'maior que',
-    value: '0',
+    value: 0,
   });
 
   const handleChange = ({ target: { value: valor, name } }) => {
@@ -26,6 +26,7 @@ function SearchByNumberInput() {
         filters,
       ],
     }));
+    setIsSearching(true);
   };
 
   return (
@@ -37,6 +38,7 @@ function SearchByNumberInput() {
           id="column"
           data-testid="column-filter"
           onChange={ handleChange }
+          value={ filters.column }
         >
           <option>population</option>
           <option>orbital_period</option>
@@ -53,7 +55,7 @@ function SearchByNumberInput() {
           id="comparison"
           data-testid="comparison-filter"
           onChange={ handleChange }
-
+          value={ filters.comparison }
         >
           <option>maior que</option>
           <option>menor que</option>
@@ -69,7 +71,7 @@ function SearchByNumberInput() {
           id="value"
           data-testid="value-filter"
           onChange={ handleChange }
-
+          value={ filters.value }
         />
         <button
           type="button"

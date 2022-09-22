@@ -1,62 +1,66 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
+import getStarWarsPlanets from '../services/starwarsApi';
 
 function Table() {
-  const { planets, fetchPlanets, filter, filterByNum } = useContext(PlanetsContext);
+  const { planets, setPlanets, filter, filterByNum,
+    isSearching } = useContext(PlanetsContext);
   const { filterByName: { name } } = filter;
   const { filterByNumericValues } = filterByNum;
-  const [filteredPlanets, setFilteredPlanets] = useState([]);
+  // const [filteredPlanets, setFilteredPlanets] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
-      await fetchPlanets();
-      console.log(planets);
-      setFilteredPlanets(planets);
-      console.log(filteredPlanets);
-    }
-    fetchData();
+    const fetchPlanets = async () => {
+      const response = await getStarWarsPlanets();
+      response.forEach((planet) => {
+        setPlanets((prev) => [...prev, planet]);
+      });
+    };
+    fetchPlanets();
   }, []);
 
-  const renderPlanets = (planetsFiltered) => (
-    planetsFiltered.map((planet) => (
-      <tr key={ planet.name }>
-        <td>{planet.name}</td>
-        <td>{planet.rotation_period}</td>
-        <td>{planet.orbital_period}</td>
-        <td>{planet.diameter}</td>
-        <td>{planet.climate}</td>
-        <td>{planet.gravity}</td>
-        <td>{planet.terrain}</td>
-        <td>{planet.surface_water}</td>
-        <td>{planet.population}</td>
-        <td>{planet.films}</td>
-        <td>{planet.created}</td>
-        <td>{planet.edited}</td>
-        <td>{planet.url}</td>
-      </tr>
-    )));
-
-  useEffect(() => {
-    const planetsFiltered = planets.filter((e) => e.name.toLowerCase()
-      .includes(name.toLowerCase()));
-    setFilteredPlanets(planetsFiltered);
-  }, [name]);
-
-  useEffect(() => {
-    let index = 1;
-    if (filterByNumericValues.length > 1) {
-      const { column, comparison, value } = filterByNumericValues[index];
-      // console.log(column, comparison, value);
-      const newFilter = filteredPlanets.filter((e) => e[column] > value);
-      // console.log(newFilter);
-      setFilteredPlanets(newFilter);
-      index += 1;
+  const handleNumericFilters = (linha) => {
+    const auxBools = [];
+    if (isSearching) {
+      filterByNumericValues.forEach((numFilter) => {
+        if (numFilter.comparison === 'maior que') {
+          auxBools.push(Number(linha[numFilter.column]) >= Number(numFilter.value));
+        }
+        if (numFilter.comparison === 'menor que') {
+          auxBools.push(Number(linha[numFilter.column]) <= Number(numFilter.value));
+        }
+        if (numFilter.comparison === 'igual a') {
+          auxBools.push(Number(linha[numFilter.column]) === Number(numFilter.value));
+        }
+      });
     }
-  }, [filterByNumericValues]);
+    return auxBools.every((el) => el);
+  };
+
+  const renderPlanets = (planetsFiltered) => (
+    planetsFiltered.filter((planet) => planet.name.toLowerCase()
+      .includes(name.toLowerCase()))
+      .filter(handleNumericFilters)
+      .map((planet) => (
+        <tr key={ planet.name }>
+          <td>{planet.name}</td>
+          <td>{planet.rotation_period}</td>
+          <td>{planet.orbital_period}</td>
+          <td>{planet.diameter}</td>
+          <td>{planet.climate}</td>
+          <td>{planet.gravity}</td>
+          <td>{planet.terrain}</td>
+          <td>{planet.surface_water}</td>
+          <td>{planet.population}</td>
+          <td>{planet.films}</td>
+          <td>{planet.created}</td>
+          <td>{planet.edited}</td>
+          <td>{planet.url}</td>
+        </tr>
+      )));
 
   return (
     <div>
-      {/* {console.log(filterByNumericValues)} */}
       <table>
         <thead>
           <tr>
@@ -76,7 +80,7 @@ function Table() {
           </tr>
         </thead>
         <tbody>
-          { name.length === 0 ? renderPlanets(planets) : renderPlanets(filteredPlanets)}
+          {renderPlanets(planets)}
         </tbody>
       </table>
     </div>

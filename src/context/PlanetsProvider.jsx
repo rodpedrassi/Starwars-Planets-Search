@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import getStarWarsPlanets from '../services/starwarsApi';
 import PlanetsContext from './PlanetsContext';
 
 function PlanetsProvider({ children }) {
@@ -30,25 +29,22 @@ function PlanetsProvider({ children }) {
       {
         column: 'population',
         comparison: 'maior que',
-        value: '0',
+        value: 0,
       },
     ],
   });
 
-  const fetchPlanets = async () => {
-    const response = await getStarWarsPlanets();
-    response.forEach((planet) => {
-      setPlanets((prev) => [...prev, planet]);
-    });
-  };
+  const [isSearching, setIsSearching] = useState(false);
 
   const contextType = {
     planets,
-    fetchPlanets,
+    setPlanets,
     filter,
     setFilter,
     filterByNum,
     setFilterByNum,
+    isSearching,
+    setIsSearching,
   };
   return (
     <PlanetsContext.Provider value={ contextType }>
