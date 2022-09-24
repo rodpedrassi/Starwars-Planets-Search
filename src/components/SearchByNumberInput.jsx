@@ -2,7 +2,13 @@ import React, { useContext, useState } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 
 function SearchByNumberInput() {
-  const { setFilterByNum, setIsSearching } = useContext(PlanetsContext);
+  const { setFilterByNum, setIsSearching,
+    filterByNum } = useContext(PlanetsContext);
+  const { filterByNumericValues } = filterByNum;
+
+  const [options, setOptions] = useState([
+    'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water',
+  ]);
 
   const [filters, setFilters] = useState({
     column: 'population',
@@ -20,13 +26,16 @@ function SearchByNumberInput() {
   // primeiro ele manda um filtro padrão, na seguida manda o filtro digitado pelo usuario
   const search = () => {
     setFilterByNum((prev) => ({
-      ...prev,
+      // ...prev,
       filterByNumericValues: [
         ...prev.filterByNumericValues,
         filters,
       ],
     }));
     setIsSearching(true);
+    setOptions((prev) => (prev.filter((e) => e !== filters.column)));
+    console.log(options);
+    setFilters((prev) => ({ ...prev, column: options[0] }));
   };
 
   return (
@@ -40,11 +49,9 @@ function SearchByNumberInput() {
           onChange={ handleChange }
           value={ filters.column }
         >
-          <option>population</option>
-          <option>orbital_period</option>
-          <option>diameter</option>
-          <option>rotation_period</option>
-          <option>surface_water</option>
+          {
+            options.map((option) => <option key={ option }>{option}</option>)
+          }
         </select>
       </label>
 
@@ -81,6 +88,26 @@ function SearchByNumberInput() {
           Filtrar
         </button>
       </label>
+      {
+        filterByNumericValues.map((filter, index) => {
+          if (index > 0) {
+            return (
+              <div key={ index }>
+                <p>
+                  {filter.column}
+                  |
+                  {filter.comparison}
+                  |
+                  {filter.value}
+                </p>
+                <button type="button">X</button>
+              </div>
+            );
+          }
+
+          return <span key={ filter.column } />;
+        })
+      }
     </div>
   );
 }
