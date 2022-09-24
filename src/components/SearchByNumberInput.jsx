@@ -34,8 +34,23 @@ function SearchByNumberInput() {
     }));
     setIsSearching(true);
     setOptions((prev) => (prev.filter((e) => e !== filters.column)));
-    console.log(options);
     setFilters((prev) => ({ ...prev, column: options[0] }));
+  };
+
+  const resetFilters = () => {
+    setOptions(['population', 'orbital_period', 'diameter',
+      'rotation_period', 'surface_water']);
+    setFilterByNum({ filterByNumericValues: [
+      {
+        column: 'population',
+        comparison: 'maior que',
+        value: 0,
+      },
+    ] });
+  };
+
+  const removeSelectedFilter = () => {
+
   };
 
   return (
@@ -88,11 +103,18 @@ function SearchByNumberInput() {
           Filtrar
         </button>
       </label>
+      <button
+        type="button"
+        data-testid="button-remove-filters"
+        onClick={ resetFilters }
+      >
+        Resetar Filtros
+      </button>
       {
         filterByNumericValues.map((filter, index) => {
           if (index > 0) {
             return (
-              <div key={ index }>
+              <div data-testid="filter" key={ index }>
                 <p>
                   {filter.column}
                   |
@@ -100,7 +122,12 @@ function SearchByNumberInput() {
                   |
                   {filter.value}
                 </p>
-                <button type="button">X</button>
+                <button
+                  onClick={ removeSelectedFilter }
+                  type="button"
+                >
+                  X
+                </button>
               </div>
             );
           }
@@ -108,6 +135,7 @@ function SearchByNumberInput() {
           return <span key={ filter.column } />;
         })
       }
+
     </div>
   );
 }
